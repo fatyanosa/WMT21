@@ -9,6 +9,7 @@ tail -n +4 dataset/flores101.jv_id_ms_tl_ta_en.bpe16k/sentencepiece.bpe.vocab | 
 bash run-flores101.sh
 
 Train from scratch:
+
 CUDA_VISIBLE_DEVICES=0 fairseq-train examples/flores101/dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe16k/ \
 --max-epoch 50 \
 --ddp-backend=legacy_ddp \
