@@ -1,0 +1,7 @@
+python>=3.6
+pytorch>=1.5.0
+fastBPE
+sacremoses
+subword_nmt
+sacrebleu
+sentencepiece
