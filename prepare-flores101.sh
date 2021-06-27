@@ -6,7 +6,7 @@
 # LICENSE file in the root directory of this source tree.
 
 ROOT=$(dirname "$0")
-SCRIPTS=$ROOT/../../scripts
+SCRIPTS=$ROOT/fairseq/scripts
 SPM_TRAIN=$SCRIPTS/spm_train.py
 SPM_ENCODE=$SCRIPTS/spm_encode.py
 
@@ -164,5 +164,26 @@ for SRC; do
                 --inputs $DATA/valid${i}.${SRC}-${TGT}.${SRC} $DATA/valid${i}.${SRC}-${TGT}.${TGT} \
                 --outputs $DATA/valid${i}.bpe.${SRC}-${TGT}.${SRC} $DATA/valid${i}.bpe.${SRC}-${TGT}.${TGT}
         done
+    done
+done
+
+# Binarize the dataset
+tail -n +4 dataset/flores101.jv_id_ms_tl_ta_en.bpe16k/sentencepiece.bpe.vocab | cut -f1 | sed 's/$/ 100/g' > fairseq.vocab
+
+cd fairseq
+
+TEXT=$ROOT/../dataset/flores101.jv_id_ms_tl_ta_en.bpe16k
+DATA=$ROOT/../dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe16k
+mkdir -p "$DATA"
+
+set -- en id jv ms ta tl
+for SRC; do
+    shift
+    for TGT; do
+        SRC_DICT="$(find $DATA/ -name "dict.${SRC}.txt" -type f)"
+        TGT_DICT="$(find $DATA/ -name "dict.${TGT}.txt" -type f)"
+
+        fairseq-preprocess --source-lang $SRC --target-lang $TGT --trainpref $TEXT/train.bpe.${SRC}-${TGT} --validpref $TEXT/valid0.bpe.${SRC}-${TGT},$TEXT/valid1.bpe.${SRC}-${TGT} --srcdict $ROOT/../fairseq.vocab --tgtdict $ROOT/../fairseq.vocab --destdir $DATA --workers 16
+
     done
 done
