@@ -124,15 +124,11 @@ for SRC; do
     done
 done
 
-# learn BPE with sentencepiece
-TRAIN_FILES=$(find $DATA/ -name "train*" -type f | tr "\n" ",")
-echo "learning joint BPE over ${TRAIN_FILES}..."
-python "$SPM_TRAIN" \
-    --input=$TRAIN_FILES \
-    --model_prefix=$DATA/sentencepiece.bpe \
-    --vocab_size=$BPESIZE \
-    --character_coverage=0.9887 \
-    --model_type=bpe
+# Download 615M param model.
+wget https://dl.fbaipublicfiles.com/flores101/pretrained_models/flores101_mm100_615M.tar.gz
+
+#Extract
+tar -xvzf flores101_mm100_615M.tar.gz
 
 # encode train/valid
 echo "encoding train with learned BPE..."
@@ -141,11 +137,10 @@ for SRC; do
     shift
     for TGT; do
         python "$SPM_ENCODE" \
-            --model "$DATA/sentencepiece.bpe.model" \
+            --model flores101_mm100_615M/sentencepiece.bpe.model \
             --output_format=piece \
             --inputs $DATA/train.${SRC}-${TGT}.${SRC} $DATA/train.${SRC}-${TGT}.${TGT} \
-            --outputs $DATA/train.bpe.${SRC}-${TGT}.${SRC} $DATA/train.bpe.${SRC}-${TGT}.${TGT} \
-            --min-len $TRAIN_MINLEN --max-len $TRAIN_MAXLEN
+            --outputs $DATA/train.bpe.${SRC}-${TGT}.${SRC} $DATA/train.bpe.${SRC}-${TGT}.${TGT}
     done
 done
 
@@ -159,7 +154,7 @@ for SRC; do
         for i in 0 1
         do
              python "$SPM_ENCODE" \
-                --model "$DATA/sentencepiece.bpe.model" \
+                --model flores101_mm100_615M/sentencepiece.bpe.model \
                 --output_format=piece \
                 --inputs $DATA/valid${i}.${SRC}-${TGT}.${SRC} $DATA/valid${i}.${SRC}-${TGT}.${TGT} \
                 --outputs $DATA/valid${i}.bpe.${SRC}-${TGT}.${SRC} $DATA/valid${i}.bpe.${SRC}-${TGT}.${TGT}
@@ -168,8 +163,6 @@ for SRC; do
 done
 
 # Binarize the dataset
-tail -n +4 dataset/flores101.jv_id_ms_tl_ta_en.bpe16k/sentencepiece.bpe.vocab | cut -f1 | sed 's/$/ 100/g' > dataset/fairseq.vocab
-
 cd fairseq
 
 TEXT=$ROOT/../dataset/flores101.jv_id_ms_tl_ta_en.bpe16k
@@ -183,7 +176,7 @@ for SRC; do
         SRC_DICT="$(find $DATA/ -name "dict.${SRC}.txt" -type f)"
         TGT_DICT="$(find $DATA/ -name "dict.${TGT}.txt" -type f)"
 
-        fairseq-preprocess --source-lang $SRC --target-lang $TGT --trainpref $TEXT/train.bpe.${SRC}-${TGT} --validpref $TEXT/valid0.bpe.${SRC}-${TGT},$TEXT/valid1.bpe.${SRC}-${TGT} --srcdict $ROOT/../dataset/fairseq.vocab --tgtdict $ROOT/../dataset/fairseq.vocab --destdir $DATA --workers 16
+        fairseq-preprocess --source-lang $SRC --target-lang $TGT --trainpref $TEXT/train.bpe.${SRC}-${TGT} --validpref $TEXT/valid0.bpe.${SRC}-${TGT},$TEXT/valid1.bpe.${SRC}-${TGT} --srcdict $ROOT/../flores101_mm100_615M/dict.txt --tgtdict $ROOT/../flores101_mm100_615M/dict.txt --destdir $DATA --workers 16
 
     done
 done
