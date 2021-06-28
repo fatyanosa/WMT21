@@ -17,7 +17,8 @@ mkdir -p checkpoints/multilingual_transformer
 CUDA_VISIBLE_DEVICES=0 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe16k/ \
 --max-epoch 1 \
 --ddp-backend=legacy_ddp \
---task multilingual_translation --lang-pairs en-id,en-jv,en-ms,en-ta,en-tl,id-jv,id-ms,id-ta,id-tl,jv-ms,jv-ta,jv-tl,ms-ta,ms-tl,ta-tl \
+--task multilingual_translation \
+--lang-pairs 'en-id,id-en,en-jv,jv-en,en-ms,ms-en,en-ta,ta-en,en-tl,tl-en,id-jv,jv-id,id-ms,ms-id,id-ta,ta-id,id-tl,tl-id,jv-ms,ms-jv,jv-ta,ta-jv,jv-tl,tl-jv,ms-ta,ta-ms,ms-tl,tl-ms,ta-tl,tl-ta' \
 --arch multilingual_transformer \
 --share-decoders --share-decoder-input-output-embed \
 --optimizer adam --adam-betas '(0.9, 0.98)' \
@@ -27,8 +28,7 @@ CUDA_VISIBLE_DEVICES=0 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_e
 --dropout 0.3 --weight-decay 0.0001 \
 --save-dir checkpoints/multilingual_transformer \
 --max-tokens 4000 \
---update-freq 2 \
---combine-val
+--update-freq 2 --combine-val
 
 
 ##Fine tuning from pretrained model:
@@ -42,7 +42,7 @@ CUDA_VISIBLE_DEVICES=1 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_e
 --save-dir checkpoints/flores101_mm100_615M \
 --task translation_multi_simple_epoch \
 --encoder-normalize-before --langs 'en,id,jv,ms,ta,tl' \
---lang-pairs 'en-id,en-jv,en-ms,en-ta,en-tl,id-jv,id-ms,id-ta,id-tl,jv-ms,jv-ta,jv-tl,ms-ta,ms-tl,ta-tl' \
+--lang-pairs 'en-id,id-en,en-jv,jv-en,en-ms,ms-en,en-ta,ta-en,en-tl,tl-en,id-jv,jv-id,id-ms,ms-id,id-ta,ta-id,id-tl,tl-id,jv-ms,ms-jv,jv-ta,ta-jv,jv-tl,tl-jv,ms-ta,ta-ms,ms-tl,tl-ms,ta-tl,tl-ta' \
 --max-tokens 1200 --decoder-normalize-before --sampling-method temperature \
 --sampling-temperature 1.5 --encoder-langtok src --decoder-langtok \
 --criterion label_smoothed_cross_entropy --label-smoothing 0.2 \
@@ -54,7 +54,7 @@ CUDA_VISIBLE_DEVICES=1 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_e
 --seed 222 --log-format simple --log-interval 2 --patience 10 \
 --arch transformer_wmt_en_de_big --encoder-layers 12 \
 --decoder-layers 12 --encoder-layerdrop 0.05 \
---decoder-layerdrop 0.05 --share-decoder-input-output-embed
+--decoder-layerdrop 0.05 --share-decoder-input-output-embed \
 --share-all-embeddings --ddp-backend no_c10d \
 --no-last-checkpoints --keep-best-checkpoints 1 --combine-val
 
