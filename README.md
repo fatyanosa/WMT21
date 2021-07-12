@@ -61,5 +61,6 @@ CUDA_VISIBLE_DEVICES=1 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_e
 
 
 
-NOTE: If error "$'\r': command not found" run the following
+NOTE: If error "$'\r': command not found" run the following:
+
 sed -i 's/\r$//' filename
