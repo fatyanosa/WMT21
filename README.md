@@ -8,7 +8,7 @@ Follow Installation in here: https://github.com/pytorch/fairseq
 
 cd ../..
 
-##Train from scratch:
+## Train from scratch:
 
 bash prepare-flores101.sh
 
@@ -31,7 +31,7 @@ CUDA_VISIBLE_DEVICES=0 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_e
 --update-freq 2 --combine-val
 
 
-##Fine tuning from pretrained model:
+## Fine tuning from pretrained model:
 
 bash fine-tuning.sh
 
