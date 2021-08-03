@@ -33,7 +33,7 @@ CUDA_VISIBLE_DEVICES=0 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_e
 
 ## Fine tuning from pretrained model:
 
-bash fine-tuning.sh
+bash finetune.sh
 
 mkdir -p checkpoints/flores101_mm100_615M
 
