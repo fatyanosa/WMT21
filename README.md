@@ -35,11 +35,11 @@ CUDA_VISIBLE_DEVICES=0 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_e
 
 bash finetune.sh
 
-mkdir -p checkpoints/flores101_mm100_615M
+mkdir -p checkpoints/flores101_mm100_175M
 
 CUDA_VISIBLE_DEVICES=1 fairseq-train dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe16k/ \
---finetune-from-model flores101_mm100_615M/model.pt \
---save-dir checkpoints/flores101_mm100_615M \
+--finetune-from-model flores101_mm100_175M/model.pt \
+--save-dir checkpoints/flores101_mm100_175M \
 --task translation_multi_simple_epoch \
 --encoder-normalize-before --langs 'en,id,jv,ms,ta,tl' \
 --lang-pairs 'en-id,id-en,en-jv,jv-en,en-ms,ms-en,en-ta,ta-en,en-tl,tl-en,id-jv,jv-id,id-ms,ms-id,id-ta,ta-id,id-tl,tl-id,jv-ms,ms-jv,jv-ta,ta-jv,jv-tl,tl-jv,ms-ta,ta-ms,ms-tl,tl-ms,ta-tl,tl-ta' \
