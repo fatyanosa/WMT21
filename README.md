@@ -2,12 +2,19 @@ git clone https://github.com/fatyanosa/WMT21
 
 cd WMT21
 
+
 pip install -r requirements.txt or using the following:
+
 conda create --name Flores101 python=3.6
+
 conda activate Flores101
+
 conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
+
 conda install -c conda-forge pyarrow fastbpe sacremoses sacrebleu sentencepiece fairseq wandb
+
 pip install subword-nmt
+
 
 Clone and install fairseq:
 git clone https://github.com/pytorch/fairseq
