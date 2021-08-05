@@ -62,6 +62,9 @@ for SRC; do
             echo "$FILES"
 
             for FILE in $FILES; do
+                NUM_ROW=$(wc -l < "$FILE")
+                REMOVE_ROW=$(( NUM_ROW*10/100 ))
+                sed -i "1,$REMOVE_ROW!d" "$FILE"
                 cat "$FILE" \
                     > "$DATA/train.${SRC}-${TGT}.${LANG}"
             done
@@ -111,12 +114,18 @@ for SRC; do
 
         i=0
         for SRC_FILE in $SRC_FILES; do
+            NUM_ROW=$(wc -l < "$SRC_FILE")
+            REMOVE_ROW=$(( NUM_ROW*10/100 ))
+            sed -i "1,$REMOVE_ROW!d" "$SRC_FILE"
             cat "${SRC_FILE}" > "$DATA/valid${i}.${SRC_NAME}-${TGT_NAME}.${SRC_NAME}"
             ((i=i+1))
         done
 
         i=0
         for TGT_FILE in $TGT_FILES; do
+            NUM_ROW=$(wc -l < "$TGT_FILE")
+            REMOVE_ROW=$(( NUM_ROW*10/100 ))
+            sed -i "1,$REMOVE_ROW!d" "$TGT_FILE"
             cat "${TGT_FILE}" > "$DATA/valid${i}.${SRC_NAME}-${TGT_NAME}.${TGT_NAME}"
             ((i=i+1))
         done
@@ -161,18 +170,18 @@ for SRC; do
     done
 done
 
-# Binarize the dataset
-cd fairseq
+echo "binarize the dataset..."
+# cd fairseq
 
-TEXT=$ROOT/../dataset/flores101.jv_id_ms_tl_ta_en.bpe
-DATA=$ROOT/../dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe
+TEXT=$ROOT/dataset/flores101.jv_id_ms_tl_ta_en.bpe
+DATA="$ROOT/dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe"
 mkdir -p "$DATA"
 
 set -- en id jv ms ta tl
 for SRC; do
     shift
     for TGT; do
-        fairseq-preprocess --source-lang $SRC --target-lang $TGT --trainpref $TEXT/train.bpe.${SRC}-${TGT} --validpref $TEXT/valid0.bpe.${SRC}-${TGT},$TEXT/valid1.bpe.${SRC}-${TGT} --srcdict $ROOT/../flores101_mm100_175M/dict.txt --tgtdict $ROOT/../flores101_mm100_175M/dict.txt --destdir $DATA --workers 16
+        fairseq-preprocess --source-lang $SRC --target-lang $TGT --trainpref $TEXT/train.bpe.${SRC}-${TGT} --validpref $TEXT/valid0.bpe.${SRC}-${TGT},$TEXT/valid1.bpe.${SRC}-${TGT} --srcdict $ROOT/flores101_mm100_175M/dict.txt --tgtdict $ROOT/flores101_mm100_175M/dict.txt --destdir $DATA --workers 16
 
     done
 done

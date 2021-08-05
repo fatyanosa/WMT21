@@ -1,0 +1,1 @@
+i,epsilon,beta1,beta2,learning_rate,dropout,attention_dropout,weight_decay,seed,batch_size
