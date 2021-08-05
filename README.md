@@ -17,7 +17,9 @@ pip install subword-nmt
 
 
 Clone and install fairseq:
+
 git clone https://github.com/pytorch/fairseq
+
 pip install git+https://github.com/pytorch/fairseq.git
 
 ## Train from scratch:
