@@ -161,18 +161,17 @@ for SRC; do
     done
 done
 
-# Binarize the dataset
-cd fairseq
+echo "binarize the dataset..."
 
-TEXT=$ROOT/../dataset/flores101.jv_id_ms_tl_ta_en.bpe
-DATA=$ROOT/../dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe
+TEXT=$ROOT/dataset/flores101.jv_id_ms_tl_ta_en.bpe
+DATA="$ROOT/dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe"
 mkdir -p "$DATA"
 
 set -- en id jv ms ta tl
 for SRC; do
     shift
     for TGT; do
-        fairseq-preprocess --source-lang $SRC --target-lang $TGT --trainpref $TEXT/train.bpe.${SRC}-${TGT} --validpref $TEXT/valid0.bpe.${SRC}-${TGT},$TEXT/valid1.bpe.${SRC}-${TGT} --srcdict $ROOT/../flores101_mm100_175M/dict.txt --tgtdict $ROOT/../flores101_mm100_175M/dict.txt --destdir $DATA --workers 16
+        fairseq-preprocess --source-lang $SRC --target-lang $TGT --trainpref $TEXT/train.bpe.${SRC}-${TGT} --validpref $TEXT/valid0.bpe.${SRC}-${TGT},$TEXT/valid1.bpe.${SRC}-${TGT} --srcdict $ROOT/flores101_mm100_175M/dict.txt --tgtdict $ROOT/flores101_mm100_175M/dict.txt --destdir $DATA --workers 16
 
     done
 done

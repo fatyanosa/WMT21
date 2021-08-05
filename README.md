@@ -1,26 +1,42 @@
+* Clone all codes:
+
+``` bash
 git clone https://github.com/fatyanosa/WMT21
-
 cd WMT21
+```
 
+* Create new environment:
+
+``` bash
 conda create --name Flores101 python=3.6
-
 conda activate Flores101
+```
 
+* Requirements and installation:
 
-pip install -r requirements.txt or using the following:
-
+``` bash
+# pip install -r requirements.txt or using the following:
 conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
-
 conda install -c conda-forge pyarrow fastbpe sacremoses sacrebleu sentencepiece fairseq wandb
-
 pip install subword-nmt
+```
 
+* Clone and install fairseq:
 
-Clone and install fairseq:
-
+``` bash
 git clone https://github.com/pytorch/fairseq
-
 pip install git+https://github.com/pytorch/fairseq.git
+```
+
+* For faster training install NVIDIA's [apex](https://github.com/NVIDIA/apex) library:
+
+``` bash
+git clone https://github.com/NVIDIA/apex
+cd apex
+pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" \
+  --global-option="--deprecated_fused_adam" --global-option="--xentropy" \
+  --global-option="--fast_multihead_attn" ./
+```
 
 ## Train from scratch:
 

@@ -171,7 +171,6 @@ for SRC; do
 done
 
 echo "binarize the dataset..."
-# cd fairseq
 
 TEXT=$ROOT/dataset/flores101.jv_id_ms_tl_ta_en.bpe
 DATA="$ROOT/dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe"
