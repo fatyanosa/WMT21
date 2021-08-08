@@ -17,8 +17,12 @@ conda activate Flores101
 ``` bash
 # pip install -r requirements.txt or using the following:
 conda install pytorch torchvision torchaudio cudatoolkit=11.1 -c pytorch -c nvidia
-conda install -c conda-forge pyarrow fastbpe sacremoses sacrebleu sentencepiece fairseq wandb
+conda install -c conda-forge pyarrow fastbpe sacremoses sentencepiece fairseq wandb
 pip install subword-nmt
+
+git clone --single-branch --branch adding_spm_tokenized_bleu https://github.com/ngoyal2707/sacrebleu.git
+cd sacrebleu
+python setup.py install
 ```
 
 * Clone and install fairseq:
