@@ -10,8 +10,8 @@ SCRIPTS=$ROOT/fairseq/scripts
 SPM_TRAIN=$SCRIPTS/spm_train.py
 SPM_ENCODE=$SCRIPTS/spm_encode.py
 
-ORIG=$ROOT/dataset/flores101_orig
-DATA=$ROOT/dataset/flores101.jv_id_ms_tl_ta_en.bpe
+ORIG=$ROOT/dataset_10%/flores101_orig
+DATA=$ROOT/dataset_10%/flores101.jv_id_ms_tl_ta_en.bpe
 mkdir -p "$ORIG" "$DATA"
 
 TRAIN_FOLDER=$ORIG/small_task2_filt
@@ -172,8 +172,8 @@ done
 
 echo "binarize the dataset..."
 
-TEXT=$ROOT/dataset/flores101.jv_id_ms_tl_ta_en.bpe
-DATA="$ROOT/dataset/data-bin/flores101.jv_id_ms_tl_ta_en.bpe"
+TEXT=$ROOT/dataset_10%/flores101.jv_id_ms_tl_ta_en.bpe
+DATA="$ROOT/dataset_10%/data-bin/flores101.jv_id_ms_tl_ta_en.bpe"
 mkdir -p "$DATA"
 
 set -- en id jv ms ta tl
