@@ -104,7 +104,7 @@ for SRC; do
             fairseq-generate \
             ../$generation/data_bin_${SRC_NAME}_${TGT_NAME} \
             --batch-size 1 \
-            --path ../"$path"/checkpoint_best.pt \
+            --path ../$path/checkpoint_best.pt \
             --fixed-dictionary ../flores101_mm100_175M/dict.txt \
             -s ${SRC_NAME} -t ${TGT_NAME} \
             --remove-bpe 'sentencepiece' \
@@ -121,14 +121,41 @@ for SRC; do
             # clean fairseq generated file to only create hypotheses file.
             cat $generation_i/generate-test.txt  | grep -P '^H-'  | cut -c 3- | sort -n -k 1 | awk -F "\t" '{print $NF}' > $generation_i/sys.txt
 
+            result=$(sacrebleu ${flores101_dataset}/devtest/${TGT}.devtest < $generation_i/sys.txt --tokenize spm -b)
+            printf "%s,%s,%s\n" ${SRC_NAME} ${TGT_NAME} ${result} >> ../"$path"/sacrebleu.csv
         fi
 
-        result=$(sacrebleu ${flores101_dataset}/devtest/${TGT}.devtest < $generation_i/sys.txt --tokenize spm -b)
-        printf "%s,%s,%s\n" ${SRC_NAME} ${TGT_NAME} ${result} >> ../"$path"/sacrebleu.csv
+        generation_i="../$path/generation_${TGT_NAME}_${SRC_NAME}"
+        mkdir -p "$generation_i"
 
-        result=$(sacrebleu ${flores101_dataset}/devtest/${SRC}.devtest < $generation_i/sys.txt --tokenize spm -b)
-        printf "%s,%s,%s\n" ${TGT_NAME} ${SRC_NAME} ${result} >> ../"$path"/sacrebleu.csv
-        break
+
+        FILE=$generation_i/generate-test.txt
+        if [[ -f "$FILE" ]]; then
+            echo "$FILE exists, skipping generation"
+        else
+            fairseq-generate \
+            ../$generation/data_bin_${SRC_NAME}_${TGT_NAME} \
+            --batch-size 1 \
+            --path ../$path/checkpoint_best.pt \
+            --fixed-dictionary ../flores101_mm100_175M/dict.txt \
+            -s ${TGT_NAME} -t ${SRC_NAME} \
+            --remove-bpe 'sentencepiece' \
+            --beam 5 \
+            --task translation_multi_simple_epoch \
+            --lang-pairs 'en-id,id-en,en-jv,jv-en,en-ms,ms-en,en-ta,ta-en,en-tl,tl-en,id-jv,jv-id,id-ms,ms-id,id-ta,ta-id,id-tl,tl-id,jv-ms,ms-jv,jv-ta,ta-jv,jv-tl,tl-jv,ms-ta,ta-ms,ms-tl,tl-ms,ta-tl,tl-ta' \
+            --decoder-langtok --encoder-langtok src \
+            --gen-subset test \
+            --fp16 \
+            --dataset-impl mmap \
+            --distributed-world-size 1 --distributed-no-spawn \
+            --results-path $generation_i
+
+            # clean fairseq generated file to only create hypotheses file.
+            cat $generation_i/generate-test.txt  | grep -P '^H-'  | cut -c 3- | sort -n -k 1 | awk -F "\t" '{print $NF}' > $generation_i/sys.txt
+
+
+            result=$(sacrebleu ${flores101_dataset}/devtest/${SRC}.devtest < $generation_i/sys.txt --tokenize spm -b)
+            printf "%s,%s,%s\n" ${TGT_NAME} ${SRC_NAME} ${result} >> ../"$path"/sacrebleu.csv
+        fi
     done
-    break
 done
